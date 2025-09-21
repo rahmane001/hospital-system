@@ -77,6 +77,8 @@ exports.deleteAppointment = async (req, res) => {
   }
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+
 // Patient: Get available slots for a doctor
 exports.getAvailableAppointments = async (req, res) => {
   try {
@@ -162,6 +164,28 @@ exports.bookAppointment = async (req, res) => {
       }
     }
 
+    res.status(500).json({ error: err.message });
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// Admin: Get all appointments
+exports.adminGetAllAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find();
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Admin: Delete any appointment
+exports.adminDeleteAppointments = async (req, res) => {
+  try {
+    const appointment = await Appointment.findByIdAndDelete(req.params.id);
+    if (!appointment) return res.status(404).json({ error: "Not found" });
+    res.json({ message: "Deleted" });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
