@@ -23,45 +23,40 @@ It includes features for user management (Auth, CRUD), role-based access control
 
 hospital-system/
 │
-├─ .env                        
-├─ server.js                  
-├─ swagger.yaml                 
+├─ .env  
+├─ server.js  
+├─ swagger.yaml  
 ├─ package.json
 ├─ package-lock.json
 ├─ .gitignore
 │
 └─ src/
-   ├─ app.js                   
-   ├─ config/
-   │   └─ db.js                
-   │
-   ├─ models/
-   │   ├─ User.js               
-   │   ├─ Doctor.js            
-   │   ├─ Patient.js            
-   │   ├─ Appointment.js        
-   │   └─ Billing.js           
-   │
-   ├─ routes/
-   │   ├─ authRoutes.js         
-   │   ├─ userRoutes.js        
-   │   ├─ doctorRoutes.js       
-   │   ├─ patientRoutes.js     
-   │   ├─ appointmentRoutes.js  
-   │   └─ billingRoutes.js     
-   │
-   ├─ controllers/
-   │   ├─ authController.js
-   │   ├─ userController.js
-   │   ├─ doctorController.js
-   │   ├─ patientController.js
-   │   ├─ appointmentController.js
-   │   └─ billingController.js
-   │
-   └─ middleware/
-       └─ authMiddleware.js     
-
-
-
-
-
+├─ app.js  
+ ├─ config/
+│ └─ db.js  
+ │
+├─ models/
+│ ├─ User.js  
+ │ ├─ Doctor.js  
+ │ ├─ Patient.js  
+ │ ├─ Appointment.js  
+ │ └─ Billing.js  
+ │
+├─ routes/
+│ ├─ authRoutes.js  
+ │ ├─ userRoutes.js  
+ │ ├─ doctorRoutes.js  
+ │ ├─ patientRoutes.js  
+ │ ├─ appointmentRoutes.js  
+ │ └─ billingRoutes.js  
+ │
+├─ controllers/
+│ ├─ authController.js
+│ ├─ userController.js
+│ ├─ doctorController.js
+│ ├─ patientController.js
+│ ├─ appointmentController.js
+│ └─ billingController.js
+│
+└─ middleware/
+└─ authMiddleware.js
