@@ -28,6 +28,7 @@ const appointmentSchema = new mongoose.Schema(
       enum: ["available", "booked", "cancelled"],
       default: "available",
     },
+    price: { type: Number, required: true },
   },
   { timestamps: true }
 );

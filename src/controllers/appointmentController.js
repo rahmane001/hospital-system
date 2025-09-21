@@ -1,14 +1,19 @@
 const Appointment = require("../models/Appointment");
+const billSchema = require("../models/Bill");
 
 // Doctor: Create new slot
 exports.createAppointment = async (req, res) => {
   try {
     const doctorId = req.user.id;
-    const { date } = req.body;
+    const { date, price } = req.body;
 
     // Validate date
     if (new Date(date) < new Date()) {
       return res.status(400).json({ error: "Cannot add a slot in the past" });
+    }
+    // Validate price
+    if (price <= 0) {
+      return res.status(400).json({ error: "Price must be positive" });
     }
 
     // Check if doctor already has appointment at the same time
@@ -107,7 +112,7 @@ exports.getPatientAppointments = async (req, res) => {
 exports.bookAppointment = async (req, res) => {
   try {
     const patientId = req.user.id;
-    const slot = await Appointment.findOneAndUpdate({
+    const slot = await Appointment.findOne({
       _id: req.params.id,
       status: "available",
     });
@@ -148,7 +153,19 @@ exports.bookAppointment = async (req, res) => {
     slot.patientId = patientId;
     await slot.save();
 
-    res.json(slot);
+    //generate bill for the appointment
+    const bill = await billSchema.create({
+      appointmentId: slot._id,
+      doctorId: slot.doctorId,
+      patientId,
+      amount: slot.price,
+    });
+    //
+    res.json({
+      message: "Appointment booked successfully",
+      appointment: slot,
+      bill,
+    });
   } catch (err) {
     if (err.code === 11000) {
       // Duplicate Key Error
