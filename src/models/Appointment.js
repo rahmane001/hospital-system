@@ -32,8 +32,14 @@ const appointmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+//ensure a patient cannot book more than one appointment with the same doctor on the same day
 appointmentSchema.index(
-  { date: 1 },
-  { expireAfterSeconds: 0, partialFilterExpression: { status: "available" } }
+  { doctorId: 1, patientId: 1, date: 1 },
+  { unique: true, partialFilterExpression: { status: "booked" } }
+);
+//ensure a patient cannot book more than one appointment at the same time with different doctors
+appointmentSchema.index(
+  { patientId: 1, date: 1 },
+  { unique: true, partialFilterExpression: { status: "booked" } }
 );
 module.exports = mongoose.model("Appointment", appointmentSchema);

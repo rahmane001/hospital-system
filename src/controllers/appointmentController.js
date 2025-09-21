@@ -90,18 +90,78 @@ exports.getAvailableAppointments = async (req, res) => {
   }
 };
 
+// patient can view his booked appointments
+exports.getPatientAppointments = async (req, res) => {
+  try {
+    const patientId = req.user.id;
+    const appointments = await Appointment.find({ patientId });
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Patient: Book a slot
 exports.bookAppointment = async (req, res) => {
   try {
     const patientId = req.user.id;
-    const slot = await Appointment.findOneAndUpdate(
-      { _id: req.params.id, status: "available" },
-      { status: "booked", patientId },
-      { new: true }
-    );
+    const slot = await Appointment.findOneAndUpdate({
+      _id: req.params.id,
+      status: "available",
+    });
+
     if (!slot) return res.status(400).json({ error: "Slot not available" });
+    // Check if patient already has an appointment with the same doctor on the same day
+    const sameDay = await Appointment.findOne({
+      patientId,
+      doctorId: slot.doctorId,
+      status: "booked",
+      date: {
+        $gte: new Date(slot.date.setHours(0, 0, 0, 0)), // date start of the day
+        $lte: new Date(slot.date.setHours(23, 59, 59, 999)), // date end of the day
+      },
+    });
+
+    if (sameDay) {
+      return res.status(400).json({
+        error: "You already have an appointment with this doctor today",
+      });
+    }
+
+    // Check if patient already has an appointment at the same time with different doctor
+    const sameTime = await Appointment.findOne({
+      patientId,
+      date: slot.date,
+      status: "booked",
+    });
+
+    if (sameTime) {
+      return res
+        .status(400)
+        .json({ error: "You already have an appointment at this time" });
+    }
+
+    // Book the slot
+    slot.status = "booked";
+    slot.patientId = patientId;
+    await slot.save();
+
     res.json(slot);
   } catch (err) {
+    if (err.code === 11000) {
+      // Duplicate Key Error
+      if (err.message.includes("patientId_1_date_1")) {
+        return res
+          .status(400)
+          .json({ error: "You already have an appointment at this time" });
+      }
+      if (err.message.includes("doctorId_1_patientId_1_date_1")) {
+        return res.status(400).json({
+          error: "You already have an appointment with this doctor today",
+        });
+      }
+    }
+
     res.status(500).json({ error: err.message });
   }
 };

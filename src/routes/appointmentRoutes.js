@@ -7,6 +7,7 @@ const {
   getAvailableAppointments,
   bookAppointment,
   getAppointments,
+  getPatientAppointments,
 } = require("../controllers/appointmentController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -28,7 +29,10 @@ router.get(
   getAvailableAppointments
 );
 router.post("/book/:id", protect, authorizeRoles("patient"), bookAppointment);
-
-// i want to add a route to view the booked appointments for the patient
-
+router.get(
+  "/booked",
+  protect,
+  authorizeRoles("patient"),
+  getPatientAppointments
+);
 module.exports = router;
