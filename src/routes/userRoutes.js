@@ -13,7 +13,7 @@ router.get('/', protect, admin, getUsers);
 
 router.get('/:id', protect, admin, getUserById);
 
-router.put('/:id', protect, admin, updateUser);
+router.put('/:id', protect, updateUser);
 
 router.delete('/:id', protect, admin, deleteUser);
 
