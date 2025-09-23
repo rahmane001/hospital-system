@@ -8,6 +8,51 @@ servers:
   - url: http://localhost:5000/api
 
 paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [user, admin, doctor]
+                phone:
+                  type: string
+                address:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User logged in successfully
+
   /users:
     get:
       summary: Get all users (admin only)
@@ -47,16 +92,11 @@ paths:
             schema:
               type: object
               properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                role:
-                  type: string
-                phone:
-                  type: string
-                address:
-                  type: string
+                name: { type: string }
+                email: { type: string }
+                role: { type: string }
+                phone: { type: string }
+                address: { type: string }
       security:
         - bearerAuth: []
       responses:
@@ -87,19 +127,163 @@ paths:
             schema:
               type: object
               properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                phone:
-                  type: string
-                address:
-                  type: string
+                name: { type: string }
+                email: { type: string }
+                phone: { type: string }
+                address: { type: string }
       security:
         - bearerAuth: []
       responses:
         '200':
           description: Updated user profile
+
+  /doctors:
+    get:
+      summary: Get all doctors
+      responses:
+        '200':
+          description: List of doctors
+    post:
+      summary: Add a new doctor (admin only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                specialization: { type: string }
+                phone: { type: string }
+      responses:
+        '201':
+          description: Doctor added
+
+  /doctors/{id}:
+    get:
+      summary: Get doctor by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Doctor details
+    put:
+      summary: Update doctor (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                specialization: { type: string }
+                phone: { type: string }
+      responses:
+        '200':
+          description: Doctor updated
+    delete:
+      summary: Delete doctor (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Doctor deleted
+
+  /patients:
+    get:
+      summary: Get all patients
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of patients
+    post:
+      summary: Add a new patient
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                age: { type: integer }
+                gender: { type: string }
+                phone: { type: string }
+                address: { type: string }
+      responses:
+        '201':
+          description: Patient added
+
+  /patients/{id}:
+    get:
+      summary: Get patient by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Patient details
+    put:
+      summary: Update patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                age: { type: integer }
+                gender: { type: string }
+                phone: { type: string }
+                address: { type: string }
+      responses:
+        '200':
+          description: Patient updated
+    delete:
+      summary: Delete patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Patient deleted
 
 components:
   securitySchemes:
