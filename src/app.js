@@ -18,6 +18,8 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
 app.use("/api/bills", require("./routes/billRoutes"));
+app.use("/api/doctors", require("./routes/doctorRoutes"));
+app.use("/api/patients", require("./routes/patientRoutes"));
 
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });

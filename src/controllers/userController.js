@@ -74,3 +74,19 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
     };
+
+
+exports.approveDoctor = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user || user.role !== 'doctor') {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        user.doctorStatus = 'approved';
+        await user.save();
+        res.json({ message: 'Doctor approved', user });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+

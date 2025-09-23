@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
         enum: ['admin', 'doctor', 'patient'],
         default: 'patient',
     },
+    doctorStatus: { type: String, enum: ['pending','approved'], default: 'pending' }
     },
     { timestamps: true }
 );
