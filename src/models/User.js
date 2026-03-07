@@ -20,10 +20,11 @@ const userSchema = new mongoose.Schema(
     },
     role: {
         type: String,
-        enum: ['admin', 'doctor', 'patient'],
+        enum: ['admin', 'doctor', 'patient', 'receptionist'],
         default: 'patient',
     },
-    doctorStatus: { type: String, enum: ['pending','approved'], default: 'pending' }
+    doctorStatus: { type: String, enum: ['pending','approved'], default: 'pending' },
+    walletAddress: { type: String, unique: true, sparse: true, lowercase: true }
     },
     { timestamps: true }
 );
