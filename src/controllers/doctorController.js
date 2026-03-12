@@ -33,6 +33,10 @@ exports.getDoctorProfile = async (req, res) => {
 
 exports.updateDoctorProfile = async (req, res) => {
     try {
+        // Ownership check: doctors can only update their own profile
+        if (req.params.id !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({ message: "Not authorized to update this profile" });
+        }
         const doctor = await Doctor.findOneAndUpdate(
         { user: req.params.id },
         req.body,
