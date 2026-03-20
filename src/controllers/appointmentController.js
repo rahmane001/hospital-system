@@ -1,5 +1,7 @@
 const Appointment = require("../models/Appointment");
 const billSchema = require("../models/Bill");
+const Notification = require("../models/Notification");
+const logAudit = require("../middleware/auditMiddleware");
 
 // Doctor: Create new slot
 exports.createAppointment = async (req, res) => {
@@ -42,7 +44,8 @@ exports.createAppointment = async (req, res) => {
 exports.getAppointments = async (req, res) => {
   try {
     const doctorId = req.user.id;
-    const appointments = await Appointment.find({ doctorId });
+    const appointments = await Appointment.find({ doctorId })
+      .populate("patientId", "name email");
     res.json(appointments);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -101,7 +104,8 @@ exports.getAvailableAppointments = async (req, res) => {
 exports.getPatientAppointments = async (req, res) => {
   try {
     const patientId = req.user.id;
-    const appointments = await Appointment.find({ patientId });
+    const appointments = await Appointment.find({ patientId })
+      .populate("doctorId", "name email");
     res.json(appointments);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -160,7 +164,47 @@ exports.bookAppointment = async (req, res) => {
       patientId,
       amount: slot.price,
     });
-    //
+
+    await logAudit(req, 'create', 'appointment', slot._id.toString(), `Appointment booked for ${new Date(slot.date).toLocaleString()}`);
+
+    // Log appointment on blockchain
+    try {
+      const { contract, deployerAccount } = require("../config/blockchain");
+      await contract.methods.logAppointment(
+        slot._id.toString(),
+        patientId.toString(),
+        slot.doctorId.toString(),
+        "booked"
+      ).send({ from: deployerAccount, gas: 300000 });
+    } catch (bcErr) {
+      console.log("Blockchain appointment log skipped:", bcErr.message);
+    }
+
+    // Log billing on blockchain
+    try {
+      const { contract, deployerAccount } = require("../config/blockchain");
+      await contract.methods.logBilling(
+        bill._id.toString(),
+        patientId.toString(),
+        Math.round(bill.amount),
+        "pending"
+      ).send({ from: deployerAccount, gas: 300000 });
+    } catch (bcErr) {
+      console.log("Blockchain billing log skipped:", bcErr.message);
+    }
+
+    // Notify patient about appointment confirmation
+    try {
+      await Notification.create({
+        user: patientId,
+        title: "Appointment Booked",
+        message: `Your appointment has been booked successfully for ${new Date(slot.date).toLocaleString()}.`,
+        type: "appointment"
+      });
+    } catch (notifErr) {
+      console.log("Notification skipped:", notifErr.message);
+    }
+
     res.json({
       message: "Appointment booked successfully",
       appointment: slot,
@@ -189,7 +233,9 @@ exports.bookAppointment = async (req, res) => {
 // Admin: Get all appointments
 exports.adminGetAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    const appointments = await Appointment.find()
+      .populate("doctorId", "name email")
+      .populate("patientId", "name email");
     res.json(appointments);
   } catch (err) {
     res.status(500).json({ error: err.message });

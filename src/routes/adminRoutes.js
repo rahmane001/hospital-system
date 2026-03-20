@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { register, login } = require('../controllers/authController');
 const { createAdmin } = require('../controllers/adminController');
+const { protect, admin } = require('../middleware/authMiddleware');
 
-router.post('/register', register);
-router.post('/login', login);
-router.post('/create-admin', createAdmin);
+// Only existing admins can create new admin accounts
+router.post('/create-admin', protect, admin, createAdmin);
 
 module.exports = router;

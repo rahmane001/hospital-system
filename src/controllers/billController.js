@@ -1,5 +1,7 @@
 const Appointment = require("../models/Appointment");
 const billSchema = require("../models/Bill");
+const Notification = require("../models/Notification");
+const logAudit = require("../middleware/auditMiddleware");
 
 //patient git all his Bills
 exports.getMyBills = async (req, res) => {
@@ -26,6 +28,34 @@ exports.payBill = async (req, res) => {
     );
     if (!bill)
       return res.status(404).json({ error: "Bill not found or already paid" });
+
+    await logAudit(req, 'pay', 'bill', bill._id.toString(), `Bill paid: £${bill.amount}`);
+
+    // Log payment on blockchain
+    try {
+      const { contract, deployerAccount } = require("../config/blockchain");
+      await contract.methods.logBilling(
+        bill._id.toString(),
+        req.user.id.toString(),
+        Math.round(bill.amount),
+        "paid"
+      ).send({ from: deployerAccount, gas: 300000 });
+    } catch (bcErr) {
+      console.log("Blockchain billing update skipped:", bcErr.message);
+    }
+
+    // Notify patient about payment confirmation
+    try {
+      await Notification.create({
+        user: req.user.id,
+        title: "Payment Confirmed",
+        message: `Your payment of £${bill.amount} has been processed successfully.`,
+        type: "billing"
+      });
+    } catch (notifErr) {
+      console.log("Notification skipped:", notifErr.message);
+    }
+
     res.json(bill);
   } catch (err) {
     res.status(500).json({ error: err.message });

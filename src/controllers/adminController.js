@@ -1,34 +1,27 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 exports.createAdmin = async (req, res) => {
-    try {
-        
-        const provided = req.body.secret || req.headers['x-admin-secret'];
-        if (!provided || provided !== process.env.ADMIN_SECRET) {
-            return res.status(403).json({ message: 'Invalid admin secret' });
-        }
+  try {
+    const { name, email, password } = req.body;
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: 'User already exists' });
 
-        const { name, email, password } = req.body;
-        const exist = await User.findOne({ email });
-        if (exist) return res.status(400).json({ message: 'User already exists' });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: 'admin',
+      doctorStatus: 'approved'
+    });
 
-        const admin = new User({
-            name,
-            email,
-            password,
-            role: 'admin',
-            doctorStatus: 'approved'
-        });
-
-        await admin.save();
-
-        res.status(201).json({
-            _id: admin._id,
-            name: admin.name,
-            email: admin.email,
-            role: admin.role
-        });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
