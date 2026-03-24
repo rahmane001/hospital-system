@@ -3,7 +3,15 @@ const User = require('../models/User');
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password');
+        let filter = {};
+        // Non-admin users only see relevant roles
+        if (req.user.role === 'doctor') {
+            filter = { role: 'patient' };
+        } else if (req.user.role === 'patient') {
+            filter = { role: 'doctor', doctorStatus: 'approved' };
+        }
+        // Admins see all users (no filter)
+        const users = await User.find(filter).select('-password');
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
