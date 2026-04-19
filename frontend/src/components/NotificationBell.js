@@ -66,9 +66,9 @@ const NotificationBell = () => {
 
       {open && (
         <div style={{
-          position: "absolute",
-          top: 40,
-          right: 0,
+          position: "fixed",
+          top: 70,
+          left: 20,
           width: 320,
           maxHeight: 420,
           overflowY: "auto",
