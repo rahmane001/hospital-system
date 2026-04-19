@@ -23,6 +23,7 @@ const billSchema = new mongoose.Schema(
       enum: ["pending", "paid", "cancelled"],
       default: "pending",
     },
+    blockchainTxHash: { type: String, default: null },
   },
   { timestamps: true }
 );

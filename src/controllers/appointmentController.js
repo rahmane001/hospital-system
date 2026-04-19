@@ -183,12 +183,14 @@ exports.bookAppointment = async (req, res) => {
     // Log billing on blockchain
     try {
       const { contract, deployerAccount } = require("../config/blockchain");
-      await contract.methods.logBilling(
+      const result = await contract.methods.logBilling(
         bill._id.toString(),
         patientId.toString(),
         Math.round(bill.amount),
         "pending"
       ).send({ from: deployerAccount, gas: 300000 });
+      bill.blockchainTxHash = result.transactionHash;
+      await bill.save();
     } catch (bcErr) {
       console.log("Blockchain billing log skipped:", bcErr.message);
     }

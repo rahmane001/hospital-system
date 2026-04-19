@@ -34,12 +34,14 @@ exports.payBill = async (req, res) => {
     // Log payment on blockchain
     try {
       const { contract, deployerAccount } = require("../config/blockchain");
-      await contract.methods.logBilling(
+      const result = await contract.methods.logBilling(
         bill._id.toString(),
         req.user.id.toString(),
         Math.round(bill.amount),
         "paid"
       ).send({ from: deployerAccount, gas: 300000 });
+      bill.blockchainTxHash = result.transactionHash;
+      await bill.save();
     } catch (bcErr) {
       console.log("Blockchain billing update skipped:", bcErr.message);
     }
