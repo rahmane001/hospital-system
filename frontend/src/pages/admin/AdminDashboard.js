@@ -101,7 +101,7 @@ const AdminDashboard = () => {
   );
 
   const renderPage = () => {
-    if (path === "/admin" || path === "/admin/analytics") return (
+    if (path === "/admin") return (
       <div>
         <div className="page-header">
           <h1>Admin Dashboard</h1>
@@ -198,6 +198,158 @@ const AdminDashboard = () => {
       </div>
     );
 
+    if (path === "/admin/analytics") {
+      // Monthly revenue from paid bills
+      const revenueByMonth = {};
+      bills.filter(b => b.status === "paid").forEach(b => {
+        const d = new Date(b.updatedAt || b.createdAt);
+        const key = `${d.toLocaleString("default", { month: "short" })} ${d.getFullYear()}`;
+        revenueByMonth[key] = (revenueByMonth[key] || 0) + b.amount;
+      });
+      const revenueData = Object.entries(revenueByMonth).map(([name, revenue]) => ({ name, revenue }));
+
+      // Appointments per doctor
+      const apptByDoctor = {};
+      appointments.forEach(a => {
+        const name = a.doctorId?.name || "Unknown";
+        apptByDoctor[name] = (apptByDoctor[name] || 0) + 1;
+      });
+      const doctorApptData = Object.entries(apptByDoctor).map(([name, count]) => ({ name, count }));
+
+      // Prescription volume by diagnosis (top 5)
+      const rxByDiagnosis = {};
+      prescriptions.forEach(p => {
+        const key = p.diagnosis || "Unspecified";
+        rxByDiagnosis[key] = (rxByDiagnosis[key] || 0) + 1;
+      });
+      const diagnosisData = Object.entries(rxByDiagnosis)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      // Blockchain activity summary (records with tx hash)
+      const onChainPrescriptions = prescriptions.filter(p => p.blockchainTxHash).length;
+      const onChainBills = bills.filter(b => b.blockchainTxHash).length;
+      const totalPaid = bills.filter(b => b.status === "paid").reduce((s, b) => s + b.amount, 0);
+      const avgBill = bills.length > 0 ? (bills.reduce((s, b) => s + b.amount, 0) / bills.length).toFixed(2) : 0;
+
+      return (
+        <div>
+          <div className="page-header">
+            <h1>Analytics</h1>
+            <p>Deep insights into hospital operations</p>
+          </div>
+          <div style={{ padding: "0 32px" }}>
+            <div className="stats-grid" style={{ marginBottom: 24 }}>
+              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}>
+                <span className="stat-icon">💰</span>
+                <div className="stat-info"><h3>£{totalPaid.toLocaleString()}</h3><p>Total Revenue Collected</p></div>
+              </div>
+              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-blue)" }}>
+                <span className="stat-icon">📊</span>
+                <div className="stat-info"><h3>£{avgBill}</h3><p>Average Bill</p></div>
+              </div>
+              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-dark-blue)" }}>
+                <span className="stat-icon">⛓️</span>
+                <div className="stat-info"><h3>{onChainPrescriptions + onChainBills}</h3><p>On-Chain Records</p></div>
+              </div>
+              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}>
+                <span className="stat-icon">💊</span>
+                <div className="stat-info"><h3>{prescriptions.length}</h3><p>Total Prescriptions</p></div>
+              </div>
+            </div>
+
+            <div className="charts-grid">
+              <div className="card">
+                <div className="card-header"><h3>Monthly Revenue Trend</h3></div>
+                <div className="card-body">
+                  {revenueData.length === 0 ? (
+                    <div className="empty-state"><div className="empty-icon">📈</div><p>No paid bills yet</p></div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={260}>
+                      <BarChart data={revenueData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" fontSize={12} />
+                        <YAxis fontSize={12} />
+                        <Tooltip formatter={(v) => `£${v}`} />
+                        <Bar dataKey="revenue" fill="var(--nhs-green)" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-header"><h3>Appointments per Doctor</h3></div>
+                <div className="card-body">
+                  {doctorApptData.length === 0 ? (
+                    <div className="empty-state"><div className="empty-icon">👨‍⚕️</div><p>No appointments yet</p></div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={260}>
+                      <BarChart data={doctorApptData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" fontSize={12} />
+                        <YAxis fontSize={12} />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="var(--nhs-blue)" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-header"><h3>Top Diagnoses (Prescriptions)</h3></div>
+                <div className="card-body">
+                  {diagnosisData.length === 0 ? (
+                    <div className="empty-state"><div className="empty-icon">💊</div><p>No prescriptions yet</p></div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={260}>
+                      <BarChart data={diagnosisData} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis type="number" fontSize={12} />
+                        <YAxis type="category" dataKey="name" fontSize={12} width={120} />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="var(--nhs-red)" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-header"><h3>Blockchain Activity</h3></div>
+                <div className="card-body">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 14 }}>
+                        <span>Prescriptions on-chain</span>
+                        <strong>{onChainPrescriptions}/{prescriptions.length}</strong>
+                      </div>
+                      <div style={{ background: "#f0f0f0", borderRadius: 4, height: 8 }}>
+                        <div style={{ background: "var(--nhs-red)", height: 8, borderRadius: 4, width: `${prescriptions.length > 0 ? (onChainPrescriptions / prescriptions.length) * 100 : 0}%` }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 14 }}>
+                        <span>Bills on-chain</span>
+                        <strong>{onChainBills}/{bills.length}</strong>
+                      </div>
+                      <div style={{ background: "#f0f0f0", borderRadius: 4, height: 8 }}>
+                        <div style={{ background: "var(--nhs-green)", height: 8, borderRadius: 4, width: `${bills.length > 0 ? (onChainBills / bills.length) * 100 : 0}%` }} />
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 8, padding: 12, background: "var(--nhs-pale-grey)", borderRadius: 8, fontSize: 13, color: "var(--nhs-dark-grey)" }}>
+                      All records are immutably logged to the Ganache smart contract at deploy time. View full verification at <strong>Blockchain Logs</strong>.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     if (path === "/admin/users") return (
       <div>
