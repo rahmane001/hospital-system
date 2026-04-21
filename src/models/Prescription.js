@@ -12,5 +12,10 @@ const prescriptionSchema = new mongoose.Schema({
   notes: { type: String },
   diagnosis: { type: String },
   blockchainTxHash: { type: String, default: null },
+  blockchainStatus: {
+    type: String,
+    enum: ["pending", "logged", "failed"],
+    default: "pending",
+  },
 }, { timestamps: true });
 module.exports = mongoose.model("Prescription", prescriptionSchema);

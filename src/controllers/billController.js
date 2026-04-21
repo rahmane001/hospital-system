@@ -31,7 +31,7 @@ exports.payBill = async (req, res) => {
 
     await logAudit(req, 'pay', 'bill', bill._id.toString(), `Bill paid: £${bill.amount}`);
 
-    // Log payment on blockchain
+    // Log payment on blockchain (state is surfaced to admin — no silent swallow)
     try {
       const { contract, deployerAccount } = require("../config/blockchain");
       const result = await contract.methods.logBilling(
@@ -41,9 +41,13 @@ exports.payBill = async (req, res) => {
         "paid"
       ).send({ from: deployerAccount, gas: 300000 });
       bill.blockchainTxHash = result.transactionHash;
+      bill.blockchainStatus = "logged";
       await bill.save();
     } catch (bcErr) {
-      console.log("Blockchain billing update skipped:", bcErr.message);
+      console.error("Blockchain billing write failed:", bcErr.message);
+      bill.blockchainTxHash = null;
+      bill.blockchainStatus = "failed";
+      await bill.save();
     }
 
     // Notify patient about payment confirmation

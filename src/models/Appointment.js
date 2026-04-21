@@ -28,6 +28,12 @@ const appointmentSchema = new mongoose.Schema(
       default: "available",
     },
     price: { type: Number, required: true },
+    blockchainTxHash: { type: String, default: null },
+    blockchainStatus: {
+      type: String,
+      enum: ["pending", "logged", "failed"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );

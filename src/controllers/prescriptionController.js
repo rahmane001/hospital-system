@@ -22,9 +22,9 @@ exports.createPrescription = async (req, res) => {
       type: "prescription"
     });
 
-    // Try log on blockchain
+    // Try log on blockchain (state is surfaced — no silent swallow)
     try {
-      const { contract, deployerAccount, web3 } = require("../config/blockchain");
+      const { contract, deployerAccount } = require("../config/blockchain");
       const medicineHash = crypto.createHash("sha256").update(JSON.stringify(medicines)).digest("hex");
       const result = await contract.methods.logPrescription(
         prescription._id.toString(),
@@ -33,9 +33,13 @@ exports.createPrescription = async (req, res) => {
         medicineHash
       ).send({ from: deployerAccount, gas: 300000 });
       prescription.blockchainTxHash = result.transactionHash;
+      prescription.blockchainStatus = "logged";
       await prescription.save();
     } catch (bcErr) {
-      console.log("Blockchain log skipped:", bcErr.message);
+      console.error("Blockchain prescription write failed:", bcErr.message);
+      prescription.blockchainTxHash = null;
+      prescription.blockchainStatus = "failed";
+      await prescription.save();
     }
 
     res.status(201).json(prescription);

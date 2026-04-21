@@ -16,28 +16,34 @@ const BlockchainPage = ({ prescriptions, bills }) => {
     setVerifying(true);
     const results = [];
 
-    // Verify prescriptions
-    for (const p of prescriptions.filter(rx => rx.blockchainTxHash)) {
-      const onChain = await verifyPrescription(p._id);
+    // Verify prescriptions — include failed rows too, so admin sees persisted failures
+    for (const p of prescriptions.filter(rx => rx.blockchainTxHash || rx.blockchainStatus === "failed")) {
+      const onChain = p.blockchainStatus === "failed"
+        ? { exists: false }
+        : await verifyPrescription(p._id);
       results.push({
         id: p._id,
         type: "Prescription",
         label: `Rx for ${p.patient?.name || "patient"}`,
         txHash: p.blockchainTxHash,
         verified: onChain.exists,
+        chainStatus: p.blockchainStatus || (p.blockchainTxHash ? "logged" : "pending"),
         date: p.createdAt,
       });
     }
 
-    // Verify bills
-    for (const b of bills.filter(b => b.status === "paid").slice(0, 10)) {
-      const onChain = await verifyBilling(b._id);
+    // Verify bills — include failed rows too
+    for (const b of bills.filter(b => b.status === "paid" || b.blockchainStatus === "failed").slice(0, 10)) {
+      const onChain = b.blockchainStatus === "failed"
+        ? { exists: false }
+        : await verifyBilling(b._id);
       results.push({
         id: b._id,
         type: "Bill",
         label: `\u00a3${b.amount} payment`,
         txHash: b.blockchainTxHash || "N/A",
         verified: onChain.exists,
+        chainStatus: b.blockchainStatus || (b.blockchainTxHash ? "logged" : "pending"),
         date: b.updatedAt,
       });
     }
@@ -97,17 +103,25 @@ const BlockchainPage = ({ prescriptions, bills }) => {
         {verifications.length > 0 && (
           <div className="table-container">
             <table>
-              <thead><tr><th>Type</th><th>Record</th><th>Date</th><th>Tx Hash</th><th>On-Chain Status</th></tr></thead>
+              <thead><tr><th>Type</th><th>Record</th><th>Date</th><th>Tx Hash</th><th>Write Status</th><th>On-Chain Status</th></tr></thead>
               <tbody>
-                {verifications.map(v => (
-                  <tr key={v.id}>
-                    <td><span className="badge badge-blue">{v.type}</span></td>
-                    <td>{v.label}</td>
-                    <td style={{ fontSize: 13 }}>{new Date(v.date).toLocaleDateString()}</td>
-                    <td><code style={{ fontSize: 11 }}>{v.txHash ? `${v.txHash.slice(0, 10)}...${v.txHash.slice(-8)}` : "N/A"}</code></td>
-                    <td>{v.verified ? <span className="badge badge-green">Verified</span> : <span className="badge badge-red">Not Found</span>}</td>
-                  </tr>
-                ))}
+                {verifications.map(v => {
+                  const writeBadge = v.chainStatus === "failed"
+                    ? <span className="badge badge-red">Write Failed</span>
+                    : v.chainStatus === "logged"
+                      ? <span className="badge badge-green">Logged</span>
+                      : <span className="badge badge-yellow">Pending</span>;
+                  return (
+                    <tr key={v.id}>
+                      <td><span className="badge badge-blue">{v.type}</span></td>
+                      <td>{v.label}</td>
+                      <td style={{ fontSize: 13 }}>{new Date(v.date).toLocaleDateString()}</td>
+                      <td><code style={{ fontSize: 11 }}>{v.txHash ? `${v.txHash.slice(0, 10)}...${v.txHash.slice(-8)}` : "N/A"}</code></td>
+                      <td>{writeBadge}</td>
+                      <td>{v.verified ? <span className="badge badge-green">Verified</span> : <span className="badge badge-red">Not Found</span>}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

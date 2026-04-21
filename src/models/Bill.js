@@ -24,6 +24,11 @@ const billSchema = new mongoose.Schema(
       default: "pending",
     },
     blockchainTxHash: { type: String, default: null },
+    blockchainStatus: {
+      type: String,
+      enum: ["pending", "logged", "failed"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );

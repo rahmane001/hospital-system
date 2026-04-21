@@ -167,20 +167,26 @@ exports.bookAppointment = async (req, res) => {
 
     await logAudit(req, 'create', 'appointment', slot._id.toString(), `Appointment booked for ${new Date(slot.date).toLocaleString()}`);
 
-    // Log appointment on blockchain
+    // Log appointment on blockchain (state is surfaced — no silent swallow)
     try {
       const { contract, deployerAccount } = require("../config/blockchain");
-      await contract.methods.logAppointment(
+      const result = await contract.methods.logAppointment(
         slot._id.toString(),
         patientId.toString(),
         slot.doctorId.toString(),
         "booked"
       ).send({ from: deployerAccount, gas: 300000 });
+      slot.blockchainTxHash = result.transactionHash;
+      slot.blockchainStatus = "logged";
+      await slot.save();
     } catch (bcErr) {
-      console.log("Blockchain appointment log skipped:", bcErr.message);
+      console.error("Blockchain appointment write failed:", bcErr.message);
+      slot.blockchainTxHash = null;
+      slot.blockchainStatus = "failed";
+      await slot.save();
     }
 
-    // Log billing on blockchain
+    // Log billing on blockchain (state is surfaced — no silent swallow)
     try {
       const { contract, deployerAccount } = require("../config/blockchain");
       const result = await contract.methods.logBilling(
@@ -190,9 +196,13 @@ exports.bookAppointment = async (req, res) => {
         "pending"
       ).send({ from: deployerAccount, gas: 300000 });
       bill.blockchainTxHash = result.transactionHash;
+      bill.blockchainStatus = "logged";
       await bill.save();
     } catch (bcErr) {
-      console.log("Blockchain billing log skipped:", bcErr.message);
+      console.error("Blockchain billing write failed:", bcErr.message);
+      bill.blockchainTxHash = null;
+      bill.blockchainStatus = "failed";
+      await bill.save();
     }
 
     // Notify patient about appointment confirmation
