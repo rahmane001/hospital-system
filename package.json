@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --detectOpenHandles --forceExit",
+    "lint": "eslint src/ --ext .js",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -30,6 +31,19 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/frontend/",
+      "/blockchain/"
+    ]
   }
 }
