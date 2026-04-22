@@ -1,0 +1,78 @@
+{
+  "title": "HMS DApp — Patient Downloads Prescription PDF (Demo Part 2C)",
+  "steps": [
+    {
+      "type": "setViewport",
+      "width": 1920,
+      "height": 1080,
+      "deviceScaleFactor": 1,
+      "isMobile": false,
+      "hasTouch": false,
+      "isLandscape": true
+    },
+    {
+      "type": "navigate",
+      "url": "http://localhost:3000/login"
+    },
+    {
+      "type": "waitForElement",
+      "selectors": [["input[type=\"email\"]"]],
+      "timeout": 5000
+    },
+    {
+      "type": "click",
+      "selectors": [["input[type=\"email\"]"]],
+      "target": "main"
+    },
+    {
+      "type": "change",
+      "value": "patient@hms.com",
+      "selectors": [["input[type=\"email\"]"]]
+    },
+    {
+      "type": "click",
+      "selectors": [["input[type=\"password\"]"]],
+      "target": "main"
+    },
+    {
+      "type": "change",
+      "value": "Password123!",
+      "selectors": [["input[type=\"password\"]"]]
+    },
+    {
+      "type": "click",
+      "selectors": [["button[type=\"submit\"]"]],
+      "target": "main"
+    },
+    {
+      "type": "waitForElement",
+      "selectors": [["aria/Prescriptions"], ["text/Prescriptions"]],
+      "timeout": 8000
+    },
+    {
+      "type": "click",
+      "selectors": [["aria/Prescriptions"], ["text/Prescriptions"]],
+      "target": "main"
+    },
+    {
+      "type": "waitForElement",
+      "selectors": [["text/Download PDF"]],
+      "timeout": 6000
+    },
+    {
+      "type": "customStep",
+      "name": "pause-on-rx-list",
+      "parameters": { "ms": 4000 }
+    },
+    {
+      "type": "click",
+      "selectors": [["text/Download PDF"]],
+      "target": "main"
+    },
+    {
+      "type": "customStep",
+      "name": "pause-after-download",
+      "parameters": { "ms": 3000 }
+    }
+  ]
+}
