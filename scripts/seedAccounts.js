@@ -1,6 +1,6 @@
 /**
- * Seed Script — Creates admin, doctor, and patient accounts
- * linked to the first 3 Ganache addresses.
+ * Seed Script — Creates admin, doctor, patient, and receptionist accounts
+ * linked to the first 4 Ganache addresses.
  *
  * Usage: node scripts/seedAccounts.js
  */
@@ -11,7 +11,7 @@ const User = require("../src/models/User");
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/hospital_management";
 
-// First 3 Ganache addresses (from `truffle migrate` / Ganache GUI)
+// First 4 Ganache addresses (from `truffle migrate` / Ganache GUI)
 const ACCOUNTS = [
   {
     name: "Admin User",
@@ -38,6 +38,14 @@ const ACCOUNTS = [
     isApproved: true,
     walletAddress: "0x8395d939f25310690a391021f6d65554d7fce85e", // Ganache #3
   },
+  {
+    name: "Rita Reception",
+    email: "receptionist@hms.com",
+    password: "Password123!",
+    role: "receptionist",
+    isApproved: true,
+    walletAddress: "0x6f11e1cfbf008f7559de279a476ef4b2eea7756b", // Ganache #4
+  },
 ];
 
 async function seed() {
@@ -59,9 +67,10 @@ async function seed() {
 
     console.log("\nDone! All accounts seeded.");
     console.log("\nLogin credentials:");
-    console.log("  Admin:   admin@hms.com    / Password123!");
-    console.log("  Doctor:  doctor@hms.com   / Password123!");
-    console.log("  Patient: patient@hms.com  / Password123!");
+    console.log("  Admin:        admin@hms.com         / Password123!");
+    console.log("  Doctor:       doctor@hms.com        / Password123!");
+    console.log("  Patient:      patient@hms.com       / Password123!");
+    console.log("  Receptionist: receptionist@hms.com  / Password123!");
     console.log("\nTo use MetaMask login, import the corresponding Ganache private keys into MetaMask.");
 
     process.exit(0);

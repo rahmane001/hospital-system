@@ -158,9 +158,10 @@ cp .env.example .env
 ```bash
 node scripts/seedAccounts.js
 # Creates:
-#   admin@hms.com    / Password123!
-#   doctor@hms.com   / Password123!   (doctorStatus: approved)
-#   patient@hms.com  / Password123!
+#   admin@hms.com         / Password123!
+#   doctor@hms.com        / Password123!   (doctorStatus: approved)
+#   patient@hms.com       / Password123!
+#   receptionist@hms.com  / Password123!
 ```
 
 ### 5 — Run backend and frontend
