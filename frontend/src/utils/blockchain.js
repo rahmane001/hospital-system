@@ -4,11 +4,13 @@ const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || "0x3c183F3BCc
 const GANACHE_URL = "http://127.0.0.1:7545";
 
 // Minimal ABI — only the read functions we need
+// NOTE: web3 1.10 strict parser requires `name` on every ABI parameter,
+// including outputs. Use empty string for unnamed return values.
 const ABI = [
-  { inputs: [], name: "getTotalPatients", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
-  { inputs: [], name: "getTotalAppointments", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
-  { inputs: [], name: "getTotalBills", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
-  { inputs: [], name: "getTotalPrescriptions", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getTotalPatients", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getTotalAppointments", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getTotalBills", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getTotalPrescriptions", outputs: [{ name: "", type: "uint256" }], stateMutability: "view", type: "function" },
   {
     inputs: [{ name: "_prescriptionId", type: "string" }],
     name: "getPrescription",
