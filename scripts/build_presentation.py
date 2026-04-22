@@ -86,6 +86,14 @@ prs.slide_width = SLIDE_W
 prs.slide_height = SLIDE_H
 BLANK = prs.slide_layouts[6]
 
+# Core document metadata
+_cp = prs.core_properties
+_cp.author = "Esha Rahman"
+_cp.last_modified_by = "Esha Rahman"
+_cp.title = "HMS DApp - Hospital Management on the Blockchain"
+_cp.subject = "CN6035 Mobile and Distributed Systems Coursework"
+_cp.comments = ""
+
 def add_slide(bg_color):
     s = prs.slides.add_slide(BLANK)
     bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, SLIDE_W, SLIDE_H)

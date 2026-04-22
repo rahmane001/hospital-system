@@ -200,4 +200,4 @@ The `master` branch is kept at the pristine upstream backend (`05bea1d`) so that
 
 ## License
 
-Coursework submission — not for production use.
+Released under the [MIT License](./LICENSE). Copyright (c) 2026 Esha Rahman.

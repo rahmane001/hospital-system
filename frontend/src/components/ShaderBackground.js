@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * WebGL plasma shader background — ported from the claude.ai/design HMS DApp prototype.
+ * WebGL plasma shader background.
  * Renders an animated blue/purple plasma field. Used on Landing + Auth pages.
  */
 const ShaderBackground = ({ opacity = 1 }) => {
