@@ -73,8 +73,8 @@ const Sidebar = ({ activePath }) => {
     <aside className="sidebar">
       <div className="sidebar-logo" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <h2>🏥 HMS DApp</h2>
-          <span>Hospital Management System</span>
+          <h2>HMS DApp</h2>
+          <span>Blockchain Health</span>
         </div>
         <NotificationBell />
       </div>

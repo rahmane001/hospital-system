@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import { getUsers, getBeds, getDepartments, assignBed, releaseBed, getAdminBills, adminGetAllAppointments } from "../../utils/api";
 import { toast } from "react-toastify";
+import StatCard from "../../components/StatCard";
 
 const ReceptionistDashboard = () => {
   const location = useLocation();
@@ -67,10 +68,10 @@ const ReceptionistDashboard = () => {
         <div className="page-header"><h1>Receptionist Dashboard</h1><p>Front desk overview</p></div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid">
-            <div className="stat-card"><span className="stat-icon">👥</span><div className="stat-info"><h3>{patients.length}</h3><p>Registered Patients</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">🛏️</span><div className="stat-info"><h3>{beds.filter(b => b.status === "available").length}</h3><p>Available Beds</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">📅</span><div className="stat-info"><h3>{appointments.filter(a => a.status === "booked").length}</h3><p>Today's Appointments</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}><span className="stat-icon">💳</span><div className="stat-info"><h3>{bills.filter(b => b.status === "pending").length}</h3><p>Pending Bills</p></div></div>
+            <StatCard label="Registered Patients" value={patients.length} icon="👥" color="#3b82f6" />
+            <StatCard label="Available Beds" value={beds.filter(b => b.status === "available").length} icon="🛏️" color="#10b981" />
+            <StatCard label="Today's Appointments" value={appointments.filter(a => a.status === "booked").length} icon="📅" color="#f59e0b" />
+            <StatCard label="Pending Bills" value={bills.filter(b => b.status === "pending").length} icon="💳" color="#ef4444" />
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
@@ -173,9 +174,9 @@ const ReceptionistDashboard = () => {
         <div className="page-header"><h1>Bed Management</h1><p>Assign and manage patient beds</p></div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid" style={{ gridTemplateColumns: "repeat(3,1fr)", marginBottom: 24 }}>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">✅</span><div className="stat-info"><h3>{beds.filter(b => b.status === "available").length}</h3><p>Available</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}><span className="stat-icon">🛏️</span><div className="stat-info"><h3>{beds.filter(b => b.status === "occupied").length}</h3><p>Occupied</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">🔧</span><div className="stat-info"><h3>{beds.filter(b => b.status === "maintenance").length}</h3><p>Maintenance</p></div></div>
+            <StatCard label="Available" value={beds.filter(b => b.status === "available").length} icon="✅" color="#10b981" />
+            <StatCard label="Occupied" value={beds.filter(b => b.status === "occupied").length} icon="🛏️" color="#ef4444" />
+            <StatCard label="Maintenance" value={beds.filter(b => b.status === "maintenance").length} icon="🔧" color="#f59e0b" />
           </div>
 
           {departments.map(dept => {

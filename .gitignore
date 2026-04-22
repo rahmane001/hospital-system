@@ -26,3 +26,10 @@ yarn-debug.log*
 
 # Claude / local dev
 .claude/
+
+# Office temp lockfiles
+~$*
+
+# Python cache (presentation builder)
+__pycache__/
+*.pyc

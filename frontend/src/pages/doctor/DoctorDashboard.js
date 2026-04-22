@@ -5,6 +5,7 @@ import { getAppointments, createAppointment, getDoctorBills, getDoctorPrescripti
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { generatePrescriptionPDF } from "../../utils/pdfGenerator";
+import StatCard from "../../components/StatCard";
 
 const DoctorDashboard = () => {
   const location = useLocation();
@@ -95,10 +96,10 @@ const DoctorDashboard = () => {
         </div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid">
-            <div className="stat-card"><span className="stat-icon">📅</span><div className="stat-info"><h3>{appointments.length}</h3><p>Total Slots</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">✅</span><div className="stat-info"><h3>{appointments.filter(a => a.status === "booked").length}</h3><p>Booked</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">💳</span><div className="stat-info"><h3>£{bills.reduce((s, b) => s + b.amount, 0)}</h3><p>Total Billed</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}><span className="stat-icon">💊</span><div className="stat-info"><h3>{prescriptions.length}</h3><p>Prescriptions</p></div></div>
+            <StatCard label="Total Slots" value={appointments.length} icon="📅" color="#3b82f6" />
+            <StatCard label="Booked" value={appointments.filter(a => a.status === "booked").length} icon="✅" color="#10b981" />
+            <StatCard label="Total Billed" value={`£${bills.reduce((s, b) => s + b.amount, 0)}`} icon="💳" color="#f59e0b" />
+            <StatCard label="Prescriptions" value={prescriptions.length} icon="💊" color="#ef4444" />
           </div>
 
           <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
@@ -196,9 +197,9 @@ const DoctorDashboard = () => {
         <div className="page-header"><h1>My Billing</h1></div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid" style={{ gridTemplateColumns: "repeat(3,1fr)", marginBottom: 24 }}>
-            <div className="stat-card"><span className="stat-icon">💰</span><div className="stat-info"><h3>£{bills.reduce((s, b) => s + b.amount, 0)}</h3><p>Total Billed</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">✅</span><div className="stat-info"><h3>£{bills.filter(b => b.status === "paid").reduce((s, b) => s + b.amount, 0)}</h3><p>Collected</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">⏳</span><div className="stat-info"><h3>£{bills.filter(b => b.status === "pending").reduce((s, b) => s + b.amount, 0)}</h3><p>Outstanding</p></div></div>
+            <StatCard label="Total Billed" value={`£${bills.reduce((s, b) => s + b.amount, 0)}`} icon="💰" color="#3b82f6" />
+            <StatCard label="Collected" value={`£${bills.filter(b => b.status === "paid").reduce((s, b) => s + b.amount, 0)}`} icon="✅" color="#10b981" />
+            <StatCard label="Outstanding" value={`£${bills.filter(b => b.status === "pending").reduce((s, b) => s + b.amount, 0)}`} icon="⏳" color="#f59e0b" />
           </div>
           <div className="table-container">
             <table>
@@ -290,10 +291,10 @@ const DoctorDashboard = () => {
                     <div><strong>Clinic Address</strong><p style={{ color: "var(--nhs-dark-grey)" }}>{profile.clinicAddress || "Not set"}</p></div>
                   </div>
                 </div>
-                <div className="stats-grid" style={{ marginTop: 24 }}>
-                  <div className="stat-card"><span className="stat-icon">📅</span><div className="stat-info"><h3>{appointments.length}</h3><p>Total Slots</p></div></div>
-                  <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">💊</span><div className="stat-info"><h3>{prescriptions.length}</h3><p>Prescriptions</p></div></div>
-                  <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">💳</span><div className="stat-info"><h3>£{bills.reduce((s, b) => s + b.amount, 0)}</h3><p>Total Billed</p></div></div>
+                <div className="stats-grid" style={{ marginTop: 24, gridTemplateColumns: "repeat(3, 1fr)" }}>
+                  <StatCard label="Total Slots" value={appointments.length} icon="📅" color="#3b82f6" />
+                  <StatCard label="Prescriptions" value={prescriptions.length} icon="💊" color="#10b981" />
+                  <StatCard label="Total Billed" value={`£${bills.reduce((s, b) => s + b.amount, 0)}`} icon="💳" color="#f59e0b" />
                 </div>
               </div>
             ) : (

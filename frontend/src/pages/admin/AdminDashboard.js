@@ -7,8 +7,9 @@ import { toast } from "react-toastify";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import BlockchainPage from "./BlockchainPage";
 import AuditPage from "./AuditPage";
+import StatCard from "../../components/StatCard";
 
-const COLORS = ["#005EB8", "#009639", "#DA291C", "#FFB81C", "#41B6E6"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 const AdminDashboard = () => {
   const location = useLocation();
@@ -110,22 +111,10 @@ const AdminDashboard = () => {
         <div style={{ padding: "0 32px" }}>
           <MetaMaskBar />
           <div className="stats-grid">
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-blue)" }}>
-              <span className="stat-icon">👥</span>
-              <div className="stat-info"><h3>{users.length}</h3><p>Total Users</p></div>
-            </div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}>
-              <span className="stat-icon">📅</span>
-              <div className="stat-info"><h3>{appointments.length}</h3><p>Appointments</p></div>
-            </div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}>
-              <span className="stat-icon">💳</span>
-              <div className="stat-info"><h3>£{bills.reduce((s, b) => s + b.amount, 0).toLocaleString()}</h3><p>Total Revenue</p></div>
-            </div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}>
-              <span className="stat-icon">🛏️</span>
-              <div className="stat-info"><h3>{beds.filter(b => b.status === "available").length}/{beds.length}</h3><p>Beds Available</p></div>
-            </div>
+            <StatCard label="Total Users" value={users.length} icon="👥" color="#3b82f6" />
+            <StatCard label="Appointments" value={appointments.length} icon="📅" color="#10b981" />
+            <StatCard label="Total Revenue" value={`£${bills.reduce((s, b) => s + b.amount, 0)}`} icon="💳" color="#ef4444" />
+            <StatCard label="Beds Available" value={`${beds.filter(b => b.status === "available").length}/${beds.length}`} icon="🛏️" color="#f59e0b" />
           </div>
 
           <div className="charts-grid">
@@ -148,11 +137,11 @@ const AdminDashboard = () => {
               <div className="card-body">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={apptStatusData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                     <XAxis dataKey="name" fontSize={12} />
                     <YAxis fontSize={12} />
                     <Tooltip />
-                    <Bar dataKey="value" fill="var(--nhs-blue)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -163,11 +152,11 @@ const AdminDashboard = () => {
               <div className="card-body">
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={billingData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                     <XAxis dataKey="name" fontSize={12} />
                     <YAxis fontSize={12} />
                     <Tooltip formatter={(v) => `£${v}`} />
-                    <Bar dataKey="amount" fill="var(--nhs-green)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="amount" fill="#10b981" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -241,22 +230,10 @@ const AdminDashboard = () => {
           </div>
           <div style={{ padding: "0 32px" }}>
             <div className="stats-grid" style={{ marginBottom: 24 }}>
-              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}>
-                <span className="stat-icon">💰</span>
-                <div className="stat-info"><h3>£{totalPaid.toLocaleString()}</h3><p>Total Revenue Collected</p></div>
-              </div>
-              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-blue)" }}>
-                <span className="stat-icon">📊</span>
-                <div className="stat-info"><h3>£{avgBill}</h3><p>Average Bill</p></div>
-              </div>
-              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-dark-blue)" }}>
-                <span className="stat-icon">⛓️</span>
-                <div className="stat-info"><h3>{onChainPrescriptions + onChainBills}</h3><p>On-Chain Records</p></div>
-              </div>
-              <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}>
-                <span className="stat-icon">💊</span>
-                <div className="stat-info"><h3>{prescriptions.length}</h3><p>Total Prescriptions</p></div>
-              </div>
+              <StatCard label="Total Revenue Collected" value={`£${totalPaid}`} icon="💰" color="#10b981" />
+              <StatCard label="Average Bill" value={`£${avgBill}`} icon="📊" color="#3b82f6" />
+              <StatCard label="On-Chain Records" value={onChainPrescriptions + onChainBills} icon="⛓️" color="#8b5cf6" />
+              <StatCard label="Total Prescriptions" value={prescriptions.length} icon="💊" color="#ef4444" />
             </div>
 
             <div className="charts-grid">
@@ -268,11 +245,11 @@ const AdminDashboard = () => {
                   ) : (
                     <ResponsiveContainer width="100%" height={260}>
                       <BarChart data={revenueData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                         <XAxis dataKey="name" fontSize={12} />
                         <YAxis fontSize={12} />
                         <Tooltip formatter={(v) => `£${v}`} />
-                        <Bar dataKey="revenue" fill="var(--nhs-green)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -287,11 +264,11 @@ const AdminDashboard = () => {
                   ) : (
                     <ResponsiveContainer width="100%" height={260}>
                       <BarChart data={doctorApptData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                         <XAxis dataKey="name" fontSize={12} />
                         <YAxis fontSize={12} />
                         <Tooltip />
-                        <Bar dataKey="count" fill="var(--nhs-blue)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -306,11 +283,11 @@ const AdminDashboard = () => {
                   ) : (
                     <ResponsiveContainer width="100%" height={260}>
                       <BarChart data={diagnosisData} layout="vertical">
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                         <XAxis type="number" fontSize={12} />
                         <YAxis type="category" dataKey="name" fontSize={12} width={120} />
                         <Tooltip />
-                        <Bar dataKey="count" fill="var(--nhs-red)" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="count" fill="#ef4444" radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -454,18 +431,9 @@ const AdminDashboard = () => {
         </div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid" style={{ gridTemplateColumns: "repeat(3,1fr)", marginBottom: 24 }}>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}>
-              <span className="stat-icon">✅</span>
-              <div className="stat-info"><h3>{beds.filter(b => b.status === "available").length}</h3><p>Available</p></div>
-            </div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}>
-              <span className="stat-icon">🛏️</span>
-              <div className="stat-info"><h3>{beds.filter(b => b.status === "occupied").length}</h3><p>Occupied</p></div>
-            </div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}>
-              <span className="stat-icon">🔧</span>
-              <div className="stat-info"><h3>{beds.filter(b => b.status === "maintenance").length}</h3><p>Maintenance</p></div>
-            </div>
+            <StatCard label="Available" value={beds.filter(b => b.status === "available").length} icon="✅" color="#10b981" />
+            <StatCard label="Occupied" value={beds.filter(b => b.status === "occupied").length} icon="🛏️" color="#ef4444" />
+            <StatCard label="Maintenance" value={beds.filter(b => b.status === "maintenance").length} icon="🔧" color="#f59e0b" />
           </div>
 
           {departments.map(dept => {
@@ -548,9 +516,9 @@ const AdminDashboard = () => {
         <div className="page-header"><h1>Billing Management</h1></div>
         <div style={{ padding: "0 32px" }}>
           <div className="stats-grid" style={{ gridTemplateColumns: "repeat(3,1fr)", marginBottom: 24 }}>
-            <div className="stat-card"><span className="stat-icon">💰</span><div className="stat-info"><h3>£{bills.reduce((s, b) => s + b.amount, 0).toLocaleString()}</h3><p>Total Billed</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">✅</span><div className="stat-info"><h3>£{bills.filter(b => b.status === "paid").reduce((s, b) => s + b.amount, 0).toLocaleString()}</h3><p>Collected</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">⏳</span><div className="stat-info"><h3>£{bills.filter(b => b.status === "pending").reduce((s, b) => s + b.amount, 0).toLocaleString()}</h3><p>Outstanding</p></div></div>
+            <StatCard label="Total Billed" value={`£${bills.reduce((s, b) => s + b.amount, 0)}`} icon="💰" color="#3b82f6" />
+            <StatCard label="Collected" value={`£${bills.filter(b => b.status === "paid").reduce((s, b) => s + b.amount, 0)}`} icon="✅" color="#10b981" />
+            <StatCard label="Outstanding" value={`£${bills.filter(b => b.status === "pending").reduce((s, b) => s + b.amount, 0)}`} icon="⏳" color="#f59e0b" />
           </div>
           <div className="table-container">
             <table>

@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { payWithMetaMask, getMetaMaskAccount, isMetaMaskInstalled } from "../../utils/metamask";
 import { toast } from "react-toastify";
 import { generatePrescriptionPDF, generateBillPDF } from "../../utils/pdfGenerator";
+import StatCard from "../../components/StatCard";
 
 const DEPLOYER = "0x813F1f522E201d5937666f331FC5096e6382c78a";
 
@@ -95,10 +96,10 @@ const PatientDashboard = () => {
         <div style={{ padding: "0 32px" }}>
           <MetaMaskBar />
           <div className="stats-grid">
-            <div className="stat-card"><span className="stat-icon">👨‍⚕️</span><div className="stat-info"><h3>{doctors.length}</h3><p>Available Doctors</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-green)" }}><span className="stat-icon">📅</span><div className="stat-info"><h3>{appointments.length}</h3><p>My Appointments</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-yellow)" }}><span className="stat-icon">💳</span><div className="stat-info"><h3>{bills.filter(b => b.status === "pending").length}</h3><p>Pending Bills</p></div></div>
-            <div className="stat-card" style={{ borderLeftColor: "var(--nhs-red)" }}><span className="stat-icon">💊</span><div className="stat-info"><h3>{prescriptions.length}</h3><p>Prescriptions</p></div></div>
+            <StatCard label="Available Doctors" value={doctors.length} icon="👨‍⚕️" color="#3b82f6" />
+            <StatCard label="My Appointments" value={appointments.length} icon="📅" color="#10b981" />
+            <StatCard label="Pending Bills" value={bills.filter(b => b.status === "pending").length} icon="💳" color="#f59e0b" />
+            <StatCard label="Prescriptions" value={prescriptions.length} icon="💊" color="#ef4444" />
           </div>
 
           {bills.filter(b => b.status === "pending").length > 0 && (
