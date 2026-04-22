@@ -16,6 +16,6 @@ router.post("/pay/:id", protect, authorizeRoles("patient"), payBill);
 //doctor (view his patients Bills)
 router.get("/doctor", protect, authorizeRoles("doctor"), getDoctorBills);
 
-//admin (view all Bills)
-router.get("/admin", protect, authorizeRoles("admin"), getAdminAllBills);
+//admin + receptionist (view all Bills)
+router.get("/admin", protect, authorizeRoles("admin", "receptionist"), getAdminAllBills);
 module.exports = router;

@@ -20,7 +20,7 @@ const router = express.Router();
 router.get(
   "/admin/all",
   protect,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "receptionist"),
   adminGetAllAppointments
 );
 router.delete(
