@@ -93,7 +93,7 @@ exports.getAvailableAppointments = async (req, res) => {
     const slots = await Appointment.find({
       doctorId: req.params.doctorId,
       status: "available",
-    }).select("date status");
+    }).select("date status price");
     res.json(slots);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -50,6 +50,7 @@ exports.getMyPrescriptions = async (req, res) => {
   try {
     const prescriptions = await Prescription.find({ patient: req.user._id })
       .populate("doctor", "name email")
+      .populate("patient", "name email")
       .populate("appointment", "date")
       .sort("-createdAt");
     res.json(prescriptions);

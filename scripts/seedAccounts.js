@@ -22,7 +22,7 @@ const ACCOUNTS = [
     walletAddress: "0x813f1f522e201d5937666f331fc5096e6382c78a", // Ganache #1 (deployer)
   },
   {
-    name: "Dr. Sarah Smith",
+    name: "Sarah Smith",
     email: "doctor@hms.com",
     password: "Password123!",
     role: "doctor",
