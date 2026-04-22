@@ -1,5 +1,5 @@
 {
-  "title": "HMS DApp — Admin Tour (Demo Part 1A)",
+  "title": "HMS DApp \u2014 Admin Tour (Demo Part 1A)",
   "steps": [
     {
       "type": "setViewport",
@@ -13,91 +13,175 @@
     {
       "type": "navigate",
       "url": "http://localhost:3000/login",
-      "assertedEvents": [{ "type": "navigation", "url": "http://localhost:3000/login" }]
+      "assertedEvents": [
+        {
+          "type": "navigation",
+          "url": "http://localhost:3000/login"
+        }
+      ]
     },
     {
       "type": "waitForElement",
-      "selectors": [["input[type=\"email\"]"]],
+      "selectors": [
+        [
+          "input[type=\"email\"]"
+        ]
+      ],
       "timeout": 5000
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["input[type=\"email\"]"]],
+      "selectors": [
+        [
+          "input[type=\"email\"]"
+        ]
+      ],
       "offsetX": 10,
       "offsetY": 10
     },
     {
       "type": "change",
       "value": "admin@hms.com",
-      "selectors": [["input[type=\"email\"]"]]
+      "selectors": [
+        [
+          "input[type=\"email\"]"
+        ]
+      ]
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["input[type=\"password\"]"]],
+      "selectors": [
+        [
+          "input[type=\"password\"]"
+        ]
+      ],
       "offsetX": 10,
       "offsetY": 10
     },
     {
       "type": "change",
       "value": "Password123!",
-      "selectors": [["input[type=\"password\"]"]]
+      "selectors": [
+        [
+          "input[type=\"password\"]"
+        ]
+      ]
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["button[type=\"submit\"]"]]
+      "selectors": [
+        [
+          "button[type=\"submit\"]"
+        ]
+      ],
+      "offsetX": 5,
+      "offsetY": 5
     },
     {
       "type": "waitForElement",
-      "selectors": [["aria/Dashboard"], ["text/Dashboard"]],
+      "selectors": [
+        [
+          "aria/Dashboard"
+        ],
+        [
+          "text/Dashboard"
+        ]
+      ],
       "timeout": 8000
     },
     {
       "type": "waitForElement",
-      "selectors": [["text/Total Patients"], [".stat-card"]],
+      "selectors": [
+        [
+          "text/Total Patients"
+        ],
+        [
+          ".stat-card"
+        ]
+      ],
       "timeout": 8000
     },
     {
       "type": "customStep",
       "name": "pause-on-dashboard",
-      "parameters": { "ms": 4000 }
+      "parameters": {
+        "ms": 4000
+      }
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["aria/Analytics"], ["text/Analytics"]]
+      "selectors": [
+        [
+          "aria/Analytics"
+        ],
+        [
+          "text/Analytics"
+        ]
+      ],
+      "offsetX": 5,
+      "offsetY": 5
     },
     {
       "type": "customStep",
       "name": "pause-on-analytics",
-      "parameters": { "ms": 5000 }
+      "parameters": {
+        "ms": 5000
+      }
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["aria/Blockchain Logs"], ["text/Blockchain Logs"]]
+      "selectors": [
+        [
+          "aria/Blockchain Logs"
+        ],
+        [
+          "text/Blockchain Logs"
+        ]
+      ],
+      "offsetX": 5,
+      "offsetY": 5
     },
     {
       "type": "waitForElement",
-      "selectors": [["text/On-Chain Record Counts"]],
+      "selectors": [
+        [
+          "text/On-Chain Record Counts"
+        ]
+      ],
       "timeout": 6000
     },
     {
       "type": "customStep",
       "name": "pause-on-blockchain",
-      "parameters": { "ms": 5000 }
+      "parameters": {
+        "ms": 5000
+      }
     },
     {
       "type": "click",
       "target": "main",
-      "selectors": [["aria/Audit Log"], ["text/Audit Log"]]
+      "selectors": [
+        [
+          "aria/Audit Log"
+        ],
+        [
+          "text/Audit Log"
+        ]
+      ],
+      "offsetX": 5,
+      "offsetY": 5
     },
     {
       "type": "customStep",
       "name": "pause-on-audit",
-      "parameters": { "ms": 5000 }
+      "parameters": {
+        "ms": 5000
+      }
     }
   ]
 }
