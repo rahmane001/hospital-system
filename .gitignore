@@ -33,3 +33,9 @@ yarn-debug.log*
 # Python cache (presentation builder)
 __pycache__/
 *.pyc
+
+# Presentation artefacts (kept local, submitted separately)
+presentation/
+VideoStrategy.md
+HMS_DApp_Presentation.pptx
+*.pptx
