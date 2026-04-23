@@ -1,7 +1,7 @@
 """
 build_presentation.py — Regenerate HMS_DApp_Presentation.pptx.
 
-Produces a 13-slide editable deck at 1920x1080 (16:9 widescreen) matching the
+Produces a 14-slide editable deck at 1920x1080 (16:9 widescreen) matching the
 HTML design at /tmp/hms-design/hms-dapp-pptx/project/HMS DApp Presentation.html.
 
 Usage:
@@ -199,7 +199,7 @@ def add_arrow(slide, x1, y1, x2, y2, color=MUTED, weight=Pt(2)):
     return ln
 
 # --------------------------------------------------------------------------
-# Speaker notes — expanded for 13 slides with depth of knowledge emphasis
+# Speaker notes — expanded for 14 slides with depth of knowledge emphasis
 # --------------------------------------------------------------------------
 NOTES = [
     # 1. Title
@@ -235,10 +235,13 @@ NOTES = [
     # 11. Design rationale & critical evaluation
     "Now the critical analysis — what I chose and why, where it falls short, and what I would do next. I chose Ganache over Sepolia because the development feedback loop is essentially free — no faucet, no block time — but this means my submission cannot be verified by a tutor on a public explorer; that's a trade-off. The onlyOwner modifier keeps write authority centralised on a single deployer account, which simplifies authentication but reintroduces the trust assumption the blockchain was meant to remove. I don't have an event indexer — so querying historical records at scale means iterating through mappings. Future work: migrate to Sepolia, index events via TheGraph, expand the Jest suite beyond the three coursework-critical paths, introduce a multi-sig deployer, and add input validation middleware using express-validator. These are the concrete next steps, not aspirational bullet points.",
 
-    # 12. Video
+    # 12. Baseline vs Extension
+    "This slide makes the scope of my contribution explicit for the marker. The master branch is the pristine upstream baseline — a backend-only Node, Express, and MongoDB CRUD application with no blockchain, no React frontend, and no role-aware UI. The main branch is the submission: I layered a React 19 single-page app, a Solidity smart contract deployed to Ganache, web3.js integration, MetaMask payments, recharts analytics, jsPDF exports, audit middleware, notifications, and the entire Task 2 presentation bundle on top. The two branches live on the same GitHub repo so the tutor can diff them directly using the compare URL at the bottom of the slide. 112 files changed, roughly 59-thousand lines added.",
+
+    # 13. Video
     "This slide contains the MS Stream link to the recorded demonstration. Access has been granted to all lab tutors. The recording walks through each of the four roles, an end-to-end booking with the transaction hash appearing live in the Blockchain Verification page, a MetaMask-signed payment, and the audit log.",
 
-    # 13. References
+    # 14. References
     "In summary, HMS DApp extends a traditional CRUD application into a hybrid DApp by anchoring critical records to an immutable ledger without sacrificing usability. Here are the references used in designing and evaluating the system, in Harvard format. Thank you."
 ]
 
@@ -909,11 +912,74 @@ for i, (title, accent, bg, items) in enumerate(rationale_cols):
 set_notes(s, NOTES[10])
 
 # --------------------------------------------------------------------------
-# SLIDE 12 — Video Demonstration
+# SLIDE 12 — Baseline vs Extension (master vs main)
+# --------------------------------------------------------------------------
+s = add_slide(WHITE)
+slide_label(s, "11 — SCOPE OF CONTRIBUTION", BLUE)
+slide_title(s, "Baseline vs Extension")
+
+# Two-column comparison
+col_w = px(820); col_h = px(560); col_gap = px(40); col_x0 = px(120)
+col_y = px(280)
+
+baseline_items = [
+    ("Node.js + Express API",        "Auth, appointments, bills — REST only."),
+    ("MongoDB + Mongoose",            "Schemas for User, Appointment, Bill, Prescription."),
+    ("JWT + bcrypt auth",             "Role-agnostic, no doctor-approval flow."),
+    ("Swagger docs + seed script",    "Basic Postman-style API surface."),
+    ("No frontend",                   "Backend-only — no UI, no dashboards."),
+    ("No blockchain",                 "All trust on the API layer."),
+]
+
+extension_items = [
+    ("React 19 SPA",                  "Role-based dashboards for admin / doctor / patient / receptionist."),
+    ("HospitalRecords.sol",           "Solidity 0.8.19 contract — 4 structs, payBillOnChain payable."),
+    ("web3.js + Ganache pipeline",    "Every mutating write mirrored on-chain; tx hash persisted to Mongo."),
+    ("MetaMask integration",          "Fully decentralised patient payments via window.ethereum."),
+    ("recharts analytics + jsPDF",    "Admin charts, revenue trends, exportable bill/rx PDFs."),
+    ("Audit log, notifications, tests","Mutation middleware, bell polling, Jest suites, RBAC fixes."),
+]
+
+def compare_col(x, title, accent, bg, items):
+    # accent bar
+    add_rect(s, x, col_y, col_w, px(8), fill=accent)
+    # panel
+    add_rect(s, x, col_y + px(8), col_w, col_h, fill=bg, radius=0.03)
+    # title
+    add_text(s, x + px(30), col_y + px(30), col_w - px(60), px(44),
+             title, size=fpt(26), bold=True, color=accent, letter_spacing=200)
+    cy = col_y + px(90)
+    for name, desc in items:
+        add_text(s, x + px(30), cy, col_w - px(60), px(32),
+                 name, size=fpt(22), bold=True, color=TEXT)
+        add_text(s, x + px(30), cy + px(34), col_w - px(60), px(50),
+                 desc, size=fpt(18), color=MUTED, line_spacing=1.3)
+        cy += px(80)
+
+compare_col(col_x0, "MASTER BRANCH — BASELINE", MUTED, BG_AMBER_CARD, baseline_items)
+compare_col(col_x0 + col_w + col_gap, "MAIN BRANCH — SUBMISSION", BLUE, BG_BLUE_CARD, extension_items)
+
+# Footer — repo URLs
+footer_y = col_y + col_h + px(40)
+add_rect(s, px(120), footer_y, SLIDE_W - px(240), px(90),
+         fill=RGBColor(0xf2, 0xf5, 0xfa), radius=0.04)
+add_text(s, px(140), footer_y + px(12), SLIDE_W - px(280), px(28),
+         "REPO LINKS", size=fpt(18), bold=True, color=BLUE,
+         letter_spacing=200)
+add_text(s, px(140), footer_y + px(40), SLIDE_W - px(280), px(44),
+         "Submission (main):  github.com/rahmane001/hospital-system/tree/main\n"
+         "Baseline (master): github.com/rahmane001/hospital-system/tree/master   ·   "
+         "Diff: github.com/rahmane001/hospital-system/compare/master...main",
+         size=fpt(16), color=TEXT, font="DM Mono", line_spacing=1.4)
+
+set_notes(s, NOTES[11])
+
+# --------------------------------------------------------------------------
+# SLIDE 13 — Video Demonstration
 # --------------------------------------------------------------------------
 s = add_slide(NAVY)
 add_text(s, 0, px(260), SLIDE_W, px(34),
-         "11 — DEMONSTRATION", size=fpt(24), bold=True, color=BLUE_LT,
+         "12 — DEMONSTRATION", size=fpt(24), bold=True, color=BLUE_LT,
          align=PP_ALIGN.CENTER, letter_spacing=240)
 add_text(s, 0, px(330), SLIDE_W, px(120),
          "Video Demonstration", size=fpt(80), bold=True, color=WHITE,
@@ -938,13 +1004,13 @@ add_text(s, px(200), by + box_h + px(60), SLIDE_W - px(400), px(130),
          "blockchain verification.",
          size=fpt(24), color=RGBColor(0x8a, 0x94, 0xa2),
          align=PP_ALIGN.CENTER, line_spacing=1.6)
-set_notes(s, NOTES[11])
+set_notes(s, NOTES[12])
 
 # --------------------------------------------------------------------------
-# SLIDE 13 — References (Harvard, updated to 2026)
+# SLIDE 14 — References (Harvard, updated to 2026)
 # --------------------------------------------------------------------------
 s = add_slide(WHITE)
-slide_label(s, "12 — REFERENCES", BLUE)
+slide_label(s, "13 — REFERENCES", BLUE)
 slide_title(s, "References")
 
 refs = [
@@ -988,7 +1054,7 @@ for i, (pre, em, post) in enumerate(refs):
             {'text': post, 'size': fpt(22), 'color': TEXT},
         ]],
         line_spacing=1.4, anchor=MSO_ANCHOR.MIDDLE)
-set_notes(s, NOTES[12])
+set_notes(s, NOTES[13])
 
 # --------------------------------------------------------------------------
 prs.save(OUTPUT_PATH)

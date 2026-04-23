@@ -128,7 +128,7 @@ Final files to upload to Moodle / the submission portal:
 
 | File                              | Notes                                                         |
 |-----------------------------------|---------------------------------------------------------------|
-| `HMS_DApp_Presentation.pptx`      | 13 slides, MS Stream link on Slide 12, refs Apr 2026          |
+| `HMS_DApp_Presentation.pptx`      | 14 slides, MS Stream link on Slide 13, refs Apr 2026          |
 | `VideoStrategy.md`                | This document (optional evidence of planning)                 |
 | GitHub repo URL                   | `https://github.com/rahmane001/hospital-system` (main branch) |
 | MS Stream video URL               | Submit separately if portal requires it                       |

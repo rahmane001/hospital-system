@@ -278,30 +278,35 @@ slide — slow down, 60s of airtime minimum.
 
 ---
 
-## Block 9 — Future Work and References (9:00–9:30, Slides 11 and 13)
+## Block 9 — Baseline vs Extension + Future Work (9:00–9:30, Slides 12 and 14)
 
-**CUE:** Slide 13.
+**CUE:** Slide 12 (Baseline vs Extension).
 
 **SAY:**
-> "**Future work**: IPFS for prescription documents, role-based
-> access control via OpenZeppelin, a public testnet deployment, and
-> a wallet-linking flow so patients can self-register with MetaMask.
-> References — Solidity docs, web3.js 1.10, Mongoose, and the
-> University of East London CN6035 lecture materials — are on-screen."
+> "One slide on scope. The master branch is the pristine upstream —
+> a backend-only Node, Express, and MongoDB CRUD app with no
+> blockchain and no frontend. The main branch is everything I added
+> for this submission: the React 19 SPA, the Solidity contract,
+> MetaMask, web3.js, recharts analytics, jsPDF exports, audit
+> middleware, tests, and the full presentation bundle. Both branches
+> live on the same repo so the tutor can diff them directly. **Future
+> work**: IPFS for prescriptions, OpenZeppelin AccessControl, a
+> public testnet deployment, and a self-serve MetaMask wallet-link
+> flow."
 
-**DO:** ▸ slide 12 (MS Stream link placeholder).
+**DO:** ▸ slide 13 (video) at "flow".
 
 ---
 
-## Block 10 — Outro (9:30–9:45, Slide 12)
+## Block 10 — Outro (9:30–9:45, Slide 13)
 
-**CUE:** Slide 12, webcam PiP ON again.
+**CUE:** Slide 13, webcam PiP ON again.
 
 **SAY:**
 > "The full source is on GitHub at github-dot-com slash rahmane-001
 > slash hospital-system, tagged v1.0.0. Thank you."
 
-**DO:** hold on slide 12 for a 1s beat → stop recording.
+**DO:** hold on slide 13 for a 1s beat → stop recording.
 
 ---
 
